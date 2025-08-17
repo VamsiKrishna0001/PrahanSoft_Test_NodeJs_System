@@ -3,8 +3,10 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./src/config/db');
 const authRoutes = require('./src/routes/auth');
+const movieRoutes = require('./src/routes/movies');
 const { errorHandler, notFound } = require('./src/middleware/error');
 
 const app = express();
@@ -17,8 +19,9 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-
+app.use('/auth', rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use('/auth', authRoutes);
+app.use('/movies', movieRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
