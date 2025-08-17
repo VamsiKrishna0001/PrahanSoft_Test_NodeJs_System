@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./src/config/db');
+const authRoutes = require('./src/routes/auth');
+const { errorHandler, notFound } = require('./src/middleware/error');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -15,6 +17,11 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+
+app.use('/auth', authRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
